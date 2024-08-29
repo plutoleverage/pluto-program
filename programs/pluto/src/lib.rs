@@ -10,7 +10,7 @@ use crate::handlers::*;
 declare_id!("8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi");
 
 #[program]
-pub mod solplay {
+pub mod pluto {
     use super::*;
 
     pub fn create(ctx: Context<VaultEarnCreate>, ltv: u16, deposit_limit: u64, withdraw_limit: u64) -> Result<()> {

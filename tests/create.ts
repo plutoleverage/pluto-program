@@ -1,12 +1,12 @@
 import * as anchor from "@coral-xyz/anchor";
 import { Program } from "@coral-xyz/anchor";
-import { Solplay } from "../target/types/solplay";
+import { pluto } from "../target/types/pluto";
 
-describe("solplay", () => {
+describe("pluto", () => {
   // Configure the client to use the local cluster.
   anchor.setProvider(anchor.AnchorProvider.env());
 
-  const program = anchor.workspace.Solplay as Program<Solplay>;
+  const program = anchor.workspace.pluto as Program<pluto>;
 
   it("Is initialized!", async () => {
     // Add your test here.

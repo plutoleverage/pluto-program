@@ -2111,7 +2111,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "solplay"
+name = "pluto"
 version = "0.1.0"
 dependencies = [
  "anchor-lang",
