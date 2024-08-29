@@ -1,0 +1,109 @@
+use anchor_lang::prelude::*;
+use anchor_spl::token::{self, Token, TokenAccount, Transfer as SplTransfer};
+
+declare_id!("8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi");
+
+#[program]
+pub mod pluto {
+    use super::*;
+    use ProgramError;
+
+    pub fn create(ctx: Context<Create>, name: String) -> Result<()> {
+        let vault = &mut ctx.accounts.vault;
+
+        vault.name = name;
+        vault.owner = *ctx.accounts.owner.key;
+        vault.user_lender = 0;
+        vault.user_borrower = 0;
+        vault.fund_lent = 0;
+        vault.fund_borrowed = 0;
+
+        Ok(())
+    }
+
+    pub fn deposit(ctx: Context<Deposit>, amount: u64) -> Result<()> {
+        let ix = anchor_lang::solana_program::system_instruction::transfer(
+            ctx.accounts.user.key,
+            ctx.accounts.vault.to_account_info().key,
+            amount,
+        );
+
+        anchor_lang::solana_program::program::invoke(&ix, &[ctx.accounts.user.to_account_info(), ctx.accounts.vault.to_account_info()])?;
+
+        let vault = &mut ctx.accounts.vault;
+        vault.fund_lent += amount;
+
+        Ok(())
+    }
+
+    pub fn withdraw(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
+        let vault = &mut ctx.accounts.vault;
+        let user = &mut ctx.accounts.user;
+
+        if vault.owner != *user.key {
+            return Err(Error::from(ProgramError::IncorrectProgramId));
+        }
+
+        let rent_balance = Rent::get()?.minimum_balance(vault.to_account_info().data_len());
+        if **vault.to_account_info().lamports.borrow() - rent_balance < amount {
+            return Err(Error::from(ProgramError::InsufficientFunds));
+        }
+
+        vault.fund_lent -= amount;
+        **vault.to_account_info().lamports.borrow_mut() -= amount;
+        **user.to_account_info().lamports.borrow_mut() += amount;
+
+        Ok(())
+    }
+}
+
+#[account]
+#[derive(InitSpace)]
+pub struct Vault {
+    #[max_len(100)]
+    pub name: String,
+    pub user_lender: u32,
+    pub user_borrower: u32,
+    pub fund_lent: u64,
+    pub fund_borrowed: u64,
+    pub owner: Pubkey,
+    pub token_program: Pubkey,
+}
+
+
+#[derive(Accounts)]
+pub struct Create<'info> {
+    #[account(
+        init,
+        seeds = [b"capital_vault".as_ref(), owner.key().as_ref()],
+        bump,
+        payer = owner,
+        space = Vault::INIT_SPACE
+    )]
+    pub vault: Account<'info, Vault>,
+
+    #[account(mut)]
+    pub owner: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct Deposit<'info> {
+    #[account(mut)]
+    pub vault: Account<'info, Vault>,
+
+    #[account(mut)]
+    pub user: Signer<'info>,
+
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct Withdraw<'info> {
+    #[account(mut)]
+    pub vault: Account<'info, Vault>,
+
+    #[account(mut)]
+    pub user: Signer<'info>,
+}
