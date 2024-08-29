@@ -5,11 +5,11 @@ resolution = true
 skip-lint = false
 
 [programs.mainnet]
-solplay = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
 [programs.devnet]
-solplay = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
 [programs.localnet]
-solplay = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
 
 [registry]
 url = "https://api.apr.dev"
