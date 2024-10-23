@@ -1,6 +1,7 @@
 use fixed::traits::{FromFixed, ToFixed};
 pub use fixed::types::U68F60 as Fraction;
 pub use fixed_macro::types::U68F60 as fraction;
+use crate::error::ErrorMath;
 
 #[allow(clippy::assign_op_pattern)]
 #[allow(clippy::reversed_empty_ranges)]
@@ -199,7 +200,6 @@ use std::{
     fmt::Display,
     ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign},
 };
-use crate::error::ErrorMath;
 
 impl Add for BigFraction {
     type Output = Self;

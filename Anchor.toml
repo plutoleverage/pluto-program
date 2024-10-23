@@ -5,26 +5,65 @@ resolution = true
 skip-lint = false
 
 [programs.mainnet]
-pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+pluto = "5UFYdXHgXLMsDzHyv6pQW9zv3fNkRSNqHwhR7UPnkhzy"
 [programs.devnet]
-pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+#pluto = "5UFYdXHgXLMsDzHyv6pQW9zv3fNkRSNqHwhR7UPnkhzy"
 [programs.localnet]
-pluto = "8JABYdaQA9jspWE4oFmBNF1LbKS1nyrNGhQHm94iwURi"
+#pluto = "5UFYdXHgXLMsDzHyv6pQW9zv3fNkRSNqHwhR7UPnkhzy"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-#cluster = "Localnet"
-cluster = "devnet"
+cluster = "mainnet"
 wallet = "~/.config/solana/id.json"
-#wallet = "~/.config/solana/idx.json"
-#wallet = "~/.config/solana/idy.json"
 
 [scripts]
-#test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 check = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/check.ts"
-create = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/create.ts"
-deposit = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/deposit.ts"
-deposit-token = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/deposit_token.ts"
-withdraw = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/withdraw.ts"
+
+protocol-create = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/protocol-create.ts"
+protocol-set = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/protocol-set.ts"
+
+earn-config-create-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-create-usdc.ts"
+earn-config-create-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-create-pyusd.ts"
+earn-config-create-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-create-sol.ts"
+earn-config-set-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-set-usdc.ts"
+earn-config-set-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-set-pyusd.ts"
+earn-config-set-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-set-sol.ts"
+earn-config-change-indexer = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-config-change-indexer.ts"
+set-config-earn = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/set-config-earn.ts"
+change-indexer-config-earn = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/change-indexer-config-earn.ts"
+earn-create-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-create-usdc.ts"
+earn-create-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-create-pyusd.ts"
+earn-create-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-create-sol.ts"
+earn-create-ix = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-create-ix.ts"
+earn-change-price-oracle = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-change-price-oracle.ts"
+earn-deposit-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-deposit-usdc.ts"
+earn-deposit-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-deposit-pyusd.ts"
+earn-deposit-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-deposit-sol.ts"
+earn-withdraw-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-withdraw-usdc.ts"
+earn-withdraw-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-withdraw-pyusd.ts"
+earn-withdraw-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/earn-withdraw-sol.ts"
+
+leverage-config-create-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-create-usdc.ts"
+leverage-config-create-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-create-pyusd.ts"
+leverage-config-create-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-create-sol.ts"
+leverage-config-set-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-set-usdc.ts"
+leverage-config-set-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-set-pyusd.ts"
+leverage-config-set-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-set-sol.ts"
+leverage-config-change-keeper-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-change-keeper-usdc.ts"
+leverage-config-change-keeper-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-change-keeper-pyusd.ts"
+leverage-config-change-keeper-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-config-change-keeper-sol.ts"
+leverage-create-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-create-usdc.ts"
+leverage-create-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-create-pyusd.ts"
+leverage-create-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-create-sol.ts"
+leverage-change-price-oracle = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-change-price-oracle.ts"
+leverage-open-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-open-usdc.ts"
+leverage-open-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-open-pyusd.ts"
+leverage-open-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-open-sol.ts"
+leverage-close-usdc = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-close-usdc.ts"
+leverage-close-pyusd = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-close-pyusd.ts"
+leverage-close-sol = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-close-sol.ts"
+leverage-position-set = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/leverage-position-set.ts"
+
+create-lut = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/create-lut.ts"

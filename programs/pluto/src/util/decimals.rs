@@ -1,43 +1,79 @@
 use crate::error::ErrorMath;
 use anchor_lang::prelude::*;
+use fixed::traits::Fixed;
+use crate::error::ErrorMath::{DivideByZero, MathOverflow, MathOverflow1, MathOverflow2};
+use crate::util::constant::INDEX_ONE;
+use crate::util::fraction::{Fraction};
 
-pub const INDEX_DECIMALS: u8 = 12;
-pub const INDEX_MULTIPLICATION: u64 = 10u64.pow(12);
-pub const PERCENT_DECIMALS: u8 = 3;
-pub const PERCENT_MULTIPLICATION: u64 = 10u64.pow(3);
-pub const UNIT_DECIMALS: u8 = 6;
-pub const UNIT_MULTIPLICATION: u64 = 10u64.pow(6);
-pub const LAMPORTS_DECIMALS: u8 = 9;
-pub const LAMPORTS_MULTIPLICATION: u64 = 10u64.pow(9);
-
-pub const MAX_DECIMALS: u8 = 38;
-pub const MAX_DECIMALS_64: u8 = 20;
-
-pub fn mul( t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
+pub fn mul(t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
     let res_decimals = a_decimals + b_decimals;
     if t_decimals > res_decimals {
-        return a.checked_mul(b).ok_or(ErrorMath::MathOverflow)?.checked_div(10u128.pow((t_decimals - res_decimals) as u32)).ok_or(Error::from(ErrorMath::DivideByZero));
+        return a.checked_mul(b).ok_or(MathOverflow)?.checked_div(10u128.pow((t_decimals - res_decimals) as u32)).ok_or(Error::from(DivideByZero));
     } else if t_decimals < res_decimals{
-        return a.checked_mul(b).ok_or(ErrorMath::MathOverflow)?.checked_mul(10u128.pow((res_decimals - t_decimals) as u32)).ok_or(Error::from(ErrorMath::DivideByZero));
+        return a.checked_mul(b).ok_or(MathOverflow)?.checked_div(10u128.pow((res_decimals - t_decimals) as u32)).ok_or(Error::from(DivideByZero));
     } else {
-        return a.checked_mul(b).ok_or(Error::from(ErrorMath::MathOverflow));
+        return a.checked_mul(b).ok_or(Error::from(MathOverflow));
     }
 }
 
+pub fn mul_ceil(t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
+    let x = Fraction::from_num(a);
+    let y = Fraction::from_num(b);
+
+    let mut res = x.checked_mul(y.checked_div(Fraction::from_num(10u128.pow(b_decimals as u32))).ok_or(Error::from(MathOverflow))?).ok_or(Error::from(MathOverflow1))?;
+    if (t_decimals as i8 - a_decimals as i8) > 0 {
+        res = res.checked_mul(Fraction::from_num(10u128.pow((t_decimals - a_decimals) as u32))).ok_or(Error::from(MathOverflow2))?;
+    } else if (t_decimals as i8 - a_decimals as i8) < 0 {
+        res = res.checked_div(Fraction::from_num(10u128.pow((a_decimals - t_decimals) as u32))).ok_or(Error::from(DivideByZero))?;
+    }
+
+    Ok(res.to_num::<u128>())
+}
+
+pub fn mul_floor(t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
+    let x = Fraction::from_num(a);
+    let y = Fraction::from_num(b);
+
+    let mut res = x.checked_mul(y.checked_div(Fraction::from_num(10u128.pow(b_decimals as u32))).ok_or(Error::from(MathOverflow))?).ok_or(Error::from(MathOverflow1))?;
+    if (t_decimals as i8 - a_decimals as i8) > 0 {
+        res = res.checked_mul(Fraction::from_num(10u128.pow((t_decimals - a_decimals) as u32))).ok_or(Error::from(MathOverflow2))?;
+    } else if (t_decimals as i8 - a_decimals as i8) < 0 {
+        res = res.checked_div(Fraction::from_num(10u128.pow((a_decimals - t_decimals) as u32))).ok_or(Error::from(DivideByZero))?;
+    }
+
+    Ok(res.to_num::<u128>())
+}
+
 pub fn div( t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
-    msg!("t_decimals: {}", t_decimals);
-    msg!("a: {}", a);
-    msg!("a_decimals: {}", a_decimals);
-    msg!("b: {}", b);
-    msg!("b_decimals: {}", b_decimals);
-
-    let total_decimals = a_decimals + b_decimals;
-    msg!("total_decimals: {}", total_decimals);
     let scaled_a_decs = 10u64.pow((t_decimals + b_decimals) as u32);
-    let scaled_a = a.checked_mul(scaled_a_decs as u128).ok_or(ErrorMath::MathOverflow)?;
-    msg!("scaled_a: {}", scaled_a);
-    let raw_res = scaled_a.checked_div(b).ok_or(ErrorMath::MathOverflow)?;
-    msg!("raw_res: {}", raw_res);
+    let scaled_a = a.checked_mul(scaled_a_decs as u128).ok_or(MathOverflow)?;
+    let raw_res = scaled_a.checked_div(b).ok_or(MathOverflow)?;
 
-    return raw_res.checked_div(10u128.pow(a_decimals as u32)).ok_or(Error::from(ErrorMath::DivideByZero));
+    return raw_res.checked_div(10u128.pow(a_decimals as u32)).ok_or(Error::from(DivideByZero));
+}
+
+pub fn div_ceil( t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
+    let x = Fraction::from_num(a).checked_div(Fraction::from_num(10u128.pow(a_decimals as u32))).ok_or(Error::from(DivideByZero))?;
+    let y = Fraction::from_num(b).checked_div(Fraction::from_num(10u128.pow(b_decimals as u32))).ok_or(Error::from(DivideByZero))?;
+
+    let res = x.checked_div(y).ok_or(Error::from(MathOverflow))?.checked_mul(Fraction::from_num(10u128.pow(t_decimals as u32))).ok_or(Error::from(MathOverflow))?.to_num::<u128>();
+
+    Ok(res)
+}
+
+pub fn div_floor( t_decimals: u8, a: u128, a_decimals: u8, b: u128, b_decimals: u8) -> Result<u128> {
+    let x = Fraction::from_num(a).checked_div(Fraction::from_num(10u128.pow(a_decimals as u32))).ok_or(Error::from(DivideByZero))?;
+    let y = Fraction::from_num(b).checked_div(Fraction::from_num(10u128.pow(b_decimals as u32))).ok_or(Error::from(DivideByZero))?;
+
+    let res = x.checked_div(y).ok_or(Error::from(MathOverflow))?.checked_mul(Fraction::from_num(10u128.pow(t_decimals as u32))).ok_or(Error::from(MathOverflow))?.to_num::<u128>();
+
+    Ok(res)
+}
+
+pub fn pow(a: u128, b: u32) -> Result<u128> {
+    let mut y = INDEX_ONE;
+    for _ in 0..b {
+        y = a.checked_mul(y).unwrap().checked_div(INDEX_ONE).unwrap()
+    }
+    Ok(y)
 }
